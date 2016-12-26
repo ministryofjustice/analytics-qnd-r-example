@@ -1,0 +1,3 @@
+[submodule "drinkr"]
+	path = drinkr
+	url = https://github.com/rasmusab/drinkr.git
