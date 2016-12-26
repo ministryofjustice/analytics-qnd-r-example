@@ -7,3 +7,4 @@ node {
         def Img = docker.build "kerin/analytics-qnd-r-example:latest"
     }
 }
+
