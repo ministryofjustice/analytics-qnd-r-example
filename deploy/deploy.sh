@@ -80,7 +80,7 @@ fi
 # Expand env vars in k8s YAML
 mkdir ${DEPLOYDIR}/run
 for f in ${DEPLOYDIR}/*.y*ml; do
-  envsubst < $f > ${DEPLOYDIR}/run/$(basename f)
+  envsubst < $f > ${DEPLOYDIR}/run/$(basename $f)
 done
 
 # Apply changes, including Deployment update
