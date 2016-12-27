@@ -45,6 +45,9 @@ dependencies:
     - docker build -t ${DOCKER_REGISTRY}/${CONTAINER} .
     - docker tag -f ${DOCKER_REGISTRY}/${CONTAINER}:latest ${DOCKER_REGISTRY}/${CONTAINER}:git-${GITSHA}
 
+test:
+  override:
+    - echo "test"
 # test:
 #   override:
 #     # run the container and add a label
