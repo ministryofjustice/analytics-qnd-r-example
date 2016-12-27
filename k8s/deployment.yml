@@ -13,6 +13,6 @@ spec:
     spec:
       containers:
       - name: r-shiny-server
-        image: ${DOCKER_REGISTRY}/${CONTAINER}:build-${BUILD}
+        image: ${DOCKER_REGISTRY}/${CONTAINER}:git-${GITSHA}
         ports:
         - containerPort: 3838

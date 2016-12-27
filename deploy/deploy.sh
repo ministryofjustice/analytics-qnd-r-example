@@ -21,7 +21,7 @@
 DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
 CONTEXT="$1"
 DEPLOYDIR="$2"
-BUILD="$3"
+GITSHA="$3"
 
 #make sure we have the kubectl comand
 # chmod +x $DIR/ensure-kubectl.sh
@@ -88,7 +88,7 @@ kubectl apply -f ${DEPLOYDIR}/run/
 # Output Deployment update status until complete
 kubectl rollout status -f ${DEPLOYDIR}/run/ -R
 
-echo "Container ${DOCKER_REGISTRY}/${CONTAINER}:build-${BUILD} deployed to https://${APPNAME}.${BASEAPPHOST}/"
+echo "Container ${DOCKER_REGISTRY}/${CONTAINER}:git-${GITSHA} deployed to https://${APPNAME}.${BASEAPPHOST}/"
 
 # # Create or update kubernetes Deployment
 # if ! kubectl get deploy ${APPNAME}; then

@@ -14,6 +14,7 @@ machine:
     # update this to the directory where your yaml\json files are for kubernetes relative to your project root directory
     KUBEDEPLOYMENTDIR: ./k8s
     BUILD: ${CIRCLE_BUILD_NUM}
+    GITSHA: ${CIRCLE_SHA1}
     # used for interpod and interservice communication
     # Must be lowercase and <= 24 characters
     # defaulted to user-repo for circleci
@@ -42,7 +43,7 @@ dependencies:
     # install any missing required binaries/config
     - chmod +x ./deploy/ensure-kubectl.sh && ./deploy/ensure-kubectl.sh ${KUBECONTEXT}
     - docker build -t ${DOCKER_REGISTRY}/${CONTAINER} .
-    - docker tag -f ${DOCKER_REGISTRY}/${CONTAINER}:latest ${DOCKER_REGISTRY}/${CONTAINER}:build-${BUILD}
+    - docker tag -f ${DOCKER_REGISTRY}/${CONTAINER}:latest ${DOCKER_REGISTRY}/${CONTAINER}:git-${GITSHA}
 
 # test:
 #   override:
@@ -61,9 +62,9 @@ deployment:
   production:
     branch: master
     commands:
-       - docker push ${DOCKER_REGISTRY}/${CONTAINER}:build-${BUILD}
+       - docker push ${DOCKER_REGISTRY}/${CONTAINER}:git-${GITSHA}
        - docker push ${DOCKER_REGISTRY}/${CONTAINER}:latest
-       - chmod +x ./deploy/deploy-service.sh && ./deploy/deploy-service.sh ${KUBECONTEXT} ${KUBEDEPLOYMENTDIR} ${APPNAME} ${BUILD}
+       - chmod +x ./deploy/deploy.sh && ./deploy/deploy.sh ${KUBECONTEXT} ${KUBEDEPLOYMENTDIR} ${APPNAME} ${GITSHA}
        #put integration tests here
        # - echo "put integration tests here"
        # - ./deploy/deploy-service.sh ${KUBECONTEXTPROD} ${KUBEDEPLOYMENTDIR} rolling
