@@ -3,11 +3,9 @@ machine:
     - docker
   environment:
     KUBECONTEXT: ${KUBECONTEXT}
-    KUBEDEPLOYDIR: ./k8s
-    GITSHA: ${CIRCLE_SHA1}
-    APPNAME: analytics-$(tr [A-Z] [a-z] <<< ${CIRCLE_PROJECT_REPONAME:0:15} | tr -d '_-')
-    DOCKER_REGISTRY: quay.io
-    CONTAINER:  kerin_cosford/analytics-qnd-r-example
+    KUBE_DEPLOY_DIR: ./k8s
+    GIT_SHA: ${CIRCLE_SHA1}
+    APP_NAME: analytics-$(tr [A-Z] [a-z] <<< ${CIRCLE_PROJECT_REPONAME:0:15} | tr -d '_-')
 
 checkout:
  post:
@@ -18,15 +16,15 @@ dependencies:
   cache_directories:
     - "~/.kube"
   override:
-    - docker login -u ${QUAYUSER} -p ${QUAYPASS} -e ${QUAYEMAIL} ${DOCKER_REGISTRY}
+    - docker login -u ${DOCKER_USER} -p ${DOCKER_PASS} -e ${DOCKER_EMAIL} ${DOCKER_REGISTRY}
     - sudo apt-get install -y wget
     - sudo apt-get install -y gettext
     - wget https://storage.googleapis.com/kubernetes-release/release/v1.4.6/bin/linux/amd64/kubectl -O ~/.kube/kubectl
     - chmod +x ~/.kube/kubectl
     - echo ${KUBECONFIGB64} | base64 -d > ~/.kube/config
     - ~/.kube/kubectl config use-context ${KUBECONTEXT}
-    - docker build -t ${DOCKER_REGISTRY}/${CONTAINER} .
-    - docker tag -f ${DOCKER_REGISTRY}/${CONTAINER}:latest ${DOCKER_REGISTRY}/${CONTAINER}:git-${GITSHA}
+    - docker build -t ${DOCKER_REGISTRY}/${IMAGE_NAME} .
+    - docker tag -f ${DOCKER_REGISTRY}/${IMAGE_NAME}:latest ${DOCKER_REGISTRY}/${IMAGE_NAME}:git-${GIT_SHA}
 
 test:
   override:
@@ -36,10 +34,10 @@ deployment:
   production:
     branch: master
     commands:
-       - docker push ${DOCKER_REGISTRY}/${CONTAINER}:git-${GITSHA}
-       - docker push ${DOCKER_REGISTRY}/${CONTAINER}:latest
+       - docker push ${DOCKER_REGISTRY}/${IMAGE_NAME}:git-${GIT_SHA}
+       - docker push ${DOCKER_REGISTRY}/${IMAGE_NAME}:latest
        - mkdir build
-       - for f in ${KUBEDEPLOYDIR}/*.y*ml; do envsubst < $f > build/$(basename $f); done
+       - for f in ${KUBE_DEPLOY_DIR}/*.y*ml; do envsubst < $f > build/$(basename $f); done
        - ~/.kube/kubectl apply -f build/
-       - ~/.kube/kubectl rollout status deployment/${APPNAME}
-       - echo "Container ${DOCKER_REGISTRY}/${CONTAINER}:git-${GITSHA} deployed to https://${APPNAME}.${BASEAPPHOST}/"
+       - ~/.kube/kubectl rollout status deployment/${APP_NAME}
+       - echo "Image ${DOCKER_REGISTRY}/${IMAGE_NAME}:git-${GIT_SHA} deployed to https://${APP_NAME}.${BASE_APP_HOST}/"
