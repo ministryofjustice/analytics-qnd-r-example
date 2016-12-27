@@ -87,7 +87,7 @@ done
 ~/.kube/kubectl apply -f ${DEPLOYDIR}/run/
 
 # Output Deployment update status until complete
-~/.kube/kubectl rollout status -f ${DEPLOYDIR}/run/ -R
+~/.kube/kubectl rollout status -f ${DEPLOYDIR}/run/deployment.yml
 
 echo "Container ${DOCKER_REGISTRY}/${CONTAINER}:git-${GITSHA} deployed to https://${APPNAME}.${BASEAPPHOST}/"
 
