@@ -39,5 +39,3 @@ spec:
       volumes:
         - name: shiny-app
           emptyDir: {}
-      # imagePullSecrets:
-      #   - name: analytics-registry
