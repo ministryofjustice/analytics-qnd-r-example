@@ -39,3 +39,4 @@ deployment:
        - ~/.kube/kubectl apply -f build/
        - ~/.kube/kubectl rollout status deployment/${APP_NAME}
        - echo "Image ${DOCKER_REGISTRY}/${DOCKER_USER}/${APP_NAME}:git-${GIT_SHA} deployed to https://${APP_NAME}.${BASE_APP_HOST}/"
+
