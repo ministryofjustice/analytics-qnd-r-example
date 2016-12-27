@@ -12,7 +12,7 @@ machine:
     # KUBECONTEXTQA: aws_kubernetes
     KUBECONTEXT: ${KUBECONTEXT}
     # update this to the directory where your yaml\json files are for kubernetes relative to your project root directory
-    KUBEDEPLOYMENTDIR: ./k8s
+    KUBEDEPLOYDIR: ./k8s
     BUILD: ${CIRCLE_BUILD_NUM}
     GITSHA: ${CIRCLE_SHA1}
     # used for interpod and interservice communication
@@ -41,7 +41,13 @@ dependencies:
   override:
     - docker login -u ${QUAYUSER} -p ${QUAYPASS} -e ${QUAYEMAIL} ${DOCKER_REGISTRY}
     # install any missing required binaries/config
-    - chmod +x ./deploy/ensure-kubectl.sh && ./deploy/ensure-kubectl.sh ${KUBECONTEXT}
+    #- chmod +x ./deploy/ensure-kubectl.sh && ./deploy/ensure-kubectl.sh ${KUBECONTEXT}
+    - sudo apt-get install wget
+    - sudo apt-get install envsubst
+    - wget https://storage.googleapis.com/kubernetes-release/release/v1.4.6/bin/linux/amd64/kubectl -O ~/.kube/kubectl
+    - chmod +x ~/.kube/kubectl
+    - echo ${KUBECONFIGB64} | base64 -d > ~/.kube/config
+    - ~/.kube/kubectl config use-context ${KUBECONTEXT}
     - docker build -t ${DOCKER_REGISTRY}/${CONTAINER} .
     - docker tag -f ${DOCKER_REGISTRY}/${CONTAINER}:latest ${DOCKER_REGISTRY}/${CONTAINER}:git-${GITSHA}
 
@@ -67,7 +73,12 @@ deployment:
     commands:
        - docker push ${DOCKER_REGISTRY}/${CONTAINER}:git-${GITSHA}
        - docker push ${DOCKER_REGISTRY}/${CONTAINER}:latest
-       - chmod +x ./deploy/deploy.sh && ./deploy/deploy.sh ${KUBECONTEXT} ${KUBEDEPLOYMENTDIR} ${APPNAME} ${GITSHA}
+       #- chmod +x ./deploy/deploy.sh && ./deploy/deploy.sh ${KUBECONTEXT} ${KUBEDEPLOYMENTDIR} ${APPNAME} ${GITSHA}
+       - mkdir build
+       - for f in ${KUBEDEPLOYDIR}; do envsubst < $f > build/$(basename $f); done
+       - ~/.kube/kubectl apply -f build/
+       - ~/.kube/kubectl rollout status deployment/${APPNAME}
+       - echo "Container ${DOCKER_REGISTRY}/${CONTAINER}:git-${GITSHA} deployed to https://${APPNAME}.${BASEAPPHOST}/"
        #put integration tests here
        # - echo "put integration tests here"
        # - ./deploy/deploy-service.sh ${KUBECONTEXTPROD} ${KUBEDEPLOYMENTDIR} rolling
