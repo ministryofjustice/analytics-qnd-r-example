@@ -15,14 +15,14 @@ dependencies:
   cache_directories:
     - "~/.kube"
   override:
-    - docker login -u ${DOCKER_USER} -p ${DOCKER_PASS} -e ${DOCKER_EMAIL} ${DOCKER_REGISTRY}
+    - docker login -u ${DOCKER_USER} -p ${DOCKER_PASS} -e ${DOCKER_EMAIL}
     - sudo apt-get install -y wget
     - sudo apt-get install -y gettext
     - wget https://storage.googleapis.com/kubernetes-release/release/v1.4.6/bin/linux/amd64/kubectl -O ~/.kube/kubectl
     - chmod +x ~/.kube/kubectl
     - echo ${KUBECONFIGB64} | base64 -d > ~/.kube/config
-    - docker build -t ${DOCKER_REGISTRY}/${DOCKER_USER}/${APP_NAME} .
-    - docker tag -f ${DOCKER_REGISTRY}/${DOCKER_USER}/${APP_NAME}:latest ${DOCKER_REGISTRY}/${DOCKER_USER}/${APP_NAME}:git-${GIT_SHA}
+    - docker build -t ${DOCKER_USER}/${APP_NAME} .
+    - docker tag -f ${DOCKER_USER}/${APP_NAME}:latest ${DOCKER_USER}/${APP_NAME}:git-${GIT_SHA}
 
 test:
   override:
@@ -32,11 +32,11 @@ deployment:
   production:
     branch: master
     commands:
-       - docker push ${DOCKER_REGISTRY}/${DOCKER_USER}/${APP_NAME}:git-${GIT_SHA}
-       - docker push ${DOCKER_REGISTRY}/${DOCKER_USER}/${APP_NAME}:latest
+       - docker push ${DOCKER_USER}/${APP_NAME}:git-${GIT_SHA}
+       - docker push ${DOCKER_USER}/${APP_NAME}:latest
        - mkdir build
        - for f in ${KUBE_DEPLOY_DIR}/*.y*ml; do envsubst < $f > build/$(basename $f); done
        - ~/.kube/kubectl apply -f build/
        - ~/.kube/kubectl rollout status deployment/${APP_NAME}
-       - echo "Image ${DOCKER_REGISTRY}/${DOCKER_USER}/${APP_NAME}:git-${GIT_SHA} deployed to https://${APP_NAME}.${BASE_APP_HOST}/"
+       - echo "Image ${DOCKER_USER}/${APP_NAME}:git-${GIT_SHA} deployed to https://${APP_NAME}.${BASE_APP_HOST}/"
 
