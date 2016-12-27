@@ -1,15 +1,15 @@
 machine:
-  services:
-    - docker
+  # services:
+  #   - docker
   environment:
     KUBE_DEPLOY_DIR: ./k8s
     GIT_SHA: ${CIRCLE_SHA1}
     APP_NAME: $(tr [A-Z] [a-z] <<< ${CIRCLE_PROJECT_REPONAME:0:15} | tr '_ ' '-')
 
-checkout:
- post:
-   - git submodule sync
-   - git submodule update --init # use submodules
+# checkout:
+#  post:
+#    - git submodule sync
+#    - git submodule update --init # use submodules
 
 dependencies:
   cache_directories:
