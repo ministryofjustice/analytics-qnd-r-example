@@ -4,7 +4,7 @@ machine:
   environment:
     KUBE_DEPLOY_DIR: ./k8s
     GIT_SHA: ${CIRCLE_SHA1}
-    APP_NAME: analytics-$(tr [A-Z] [a-z] <<< ${CIRCLE_PROJECT_REPONAME:0:15} | tr -d '_-')
+    APP_NAME: analytics-$(tr [A-Z] [a-z] <<< ${CIRCLE_PROJECT_REPONAME} | tr '_ ' '-')
 
 checkout:
  post:
