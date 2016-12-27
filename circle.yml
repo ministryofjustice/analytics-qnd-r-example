@@ -14,6 +14,7 @@ checkout:
 dependencies:
   cache_directories:
     - "~/.kube"
+    - "~/.docker"
   override:
     - docker login -u ${DOCKER_USER} -p ${DOCKER_PASS} -e ${DOCKER_EMAIL}
     - sudo apt-get install -y wget
