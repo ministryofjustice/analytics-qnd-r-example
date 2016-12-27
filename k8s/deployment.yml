@@ -12,7 +12,9 @@ spec:
         app: ${APP_NAME}
     spec:
       containers:
-      - name: r-shiny-server
-        image: ${DOCKER_REGISTRY}/${DOCKER_USER}/${APP_NAME}:git-${GIT_SHA}
-        ports:
-        - containerPort: 3838
+        - name: r-shiny-server
+          image: ${DOCKER_REGISTRY}/${DOCKER_USER}/${APP_NAME}:git-${GIT_SHA}
+          ports:
+          - containerPort: 3838
+      imagePullSecrets:
+        - name: quay-kerin
