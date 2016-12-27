@@ -60,7 +60,7 @@ fi
 # fi
 
 if [ ! -e ~/.kube/config ]; then
-    echo ${KUBECONFIG} | base64 -D > ~/.kube/config
+    echo ${KUBECONFIG} | base64 -d > ~/.kube/config
 fi
 
 ~/.kube/kubectl config use-context ${KUBECONTEXT}
