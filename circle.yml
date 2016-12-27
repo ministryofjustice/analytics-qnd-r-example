@@ -75,7 +75,7 @@ deployment:
        - docker push ${DOCKER_REGISTRY}/${CONTAINER}:latest
        #- chmod +x ./deploy/deploy.sh && ./deploy/deploy.sh ${KUBECONTEXT} ${KUBEDEPLOYMENTDIR} ${APPNAME} ${GITSHA}
        - mkdir build
-       - for f in ${KUBEDEPLOYDIR}; do envsubst < $f > build/$(basename $f); done
+       - for f in ${KUBEDEPLOYDIR}/*.y*ml; do envsubst < $f > build/$(basename $f); done
        - ~/.kube/kubectl apply -f build/
        - ~/.kube/kubectl rollout status deployment/${APPNAME}
        - echo "Container ${DOCKER_REGISTRY}/${CONTAINER}:git-${GITSHA} deployed to https://${APPNAME}.${BASEAPPHOST}/"
