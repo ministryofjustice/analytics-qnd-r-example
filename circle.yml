@@ -1,6 +1,6 @@
 ## Customize the test machine
 machine:
- services: uncomment if using circleci.com
+ services:
    - docker #uncomment if using circleci.com or the container docker daemon
   # Add some environment variables
   environment:
