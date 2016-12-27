@@ -18,11 +18,26 @@ spec:
             - containerPort: 3838
           volumeMounts:
             - mountPath: /srv
-              name: app-volume
+              name: shiny-app
+        - name: git-sync
+          image: gcr.io/google_containers/git-sync
+          imagePullPolicy: Always
+          volumeMounts:
+            - mountPath: /git
+              name: shiny-app
+          env:
+          - name: GIT_SYNC_REPO
+            value: ${CIRCLE_REPOSITORY_URL}
+          - name: GIT_SYNC_REV
+            value: ${CIRCLE_SHA1}
+          - name: GIT_SYNC_ROOT
+            value: /git
+          - name: GIT_SYNC_BRANCH
+            value: master
+          - name: GIT_SYNC_WAIT
+            value: 10
       volumes:
-        - name: app-volume
-          gitRepo:
-            repository: ${CIRCLE_REPOSITORY_URL}
-            revision: ${CIRCLE_SHA1}
-      imagePullSecrets:
-        - name: analytics-registry
+        - name: shiny-app
+          emptyDir: {}
+      # imagePullSecrets:
+      #   - name: analytics-registry
