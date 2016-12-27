@@ -22,9 +22,9 @@ dependencies:
     - if [[ ! -e ~/.kube/kubectl ]]; then wget https://storage.googleapis.com/kubernetes-release/release/v1.4.6/bin/linux/amd64/kubectl -O ~/.kube/kubectl; chmod +x ~/.kube/kubectl; fi
     - echo ${KUBECONFIGB64} | base64 -d > ~/.kube/config
     - if [[ -e ~/.docker/image.tar ]]; then docker load -i ~/.docker/image.tar; fi
-    - docker build --rm=false -t ${DOCKER_USER}/${APP_NAME} .
-    - mkdir -p ~/.docker; docker save ${DOCKER_USER}/${APP_NAME} > ~/.docker/image.tar
+    - docker build --rm=false -t ${DOCKER_USER}/${APP_NAME}:latest .
     - docker tag -f ${DOCKER_USER}/${APP_NAME}:latest ${DOCKER_USER}/${APP_NAME}:git-${GIT_SHA}
+    - mkdir -p ~/.docker; docker save ${DOCKER_USER}/${APP_NAME} > ~/.docker/image.tar
 
 test:
   override:
