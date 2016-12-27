@@ -2,7 +2,6 @@ machine:
   services:
     - docker
   environment:
-    KUBECONTEXT: ${KUBECONTEXT}
     KUBE_DEPLOY_DIR: ./k8s
     GIT_SHA: ${CIRCLE_SHA1}
     APP_NAME: analytics-$(tr [A-Z] [a-z] <<< ${CIRCLE_PROJECT_REPONAME:0:15} | tr -d '_-')
@@ -22,7 +21,6 @@ dependencies:
     - wget https://storage.googleapis.com/kubernetes-release/release/v1.4.6/bin/linux/amd64/kubectl -O ~/.kube/kubectl
     - chmod +x ~/.kube/kubectl
     - echo ${KUBECONFIGB64} | base64 -d > ~/.kube/config
-    - ~/.kube/kubectl config use-context ${KUBECONTEXT}
     - docker build -t ${DOCKER_REGISTRY}/${IMAGE_NAME} .
     - docker tag -f ${DOCKER_REGISTRY}/${IMAGE_NAME}:latest ${DOCKER_REGISTRY}/${IMAGE_NAME}:git-${GIT_SHA}
 
