@@ -16,8 +16,7 @@ dependencies:
     - "~/.kube"
   override:
     - docker login -u ${DOCKER_USER} -p ${DOCKER_PASS} -e ${DOCKER_EMAIL}
-    - sudo apt-get install -y wget
-    - sudo apt-get install -y gettext
+    - sudo apt-get install -y wget gettext
     - if [[ ! -e ~/.kube/kubectl ]]; then wget https://storage.googleapis.com/kubernetes-release/release/v1.4.6/bin/linux/amd64/kubectl -O ~/.kube/kubectl; chmod +x ~/.kube/kubectl; fi
     - echo ${KUBECONFIGB64} | base64 -d > ~/.kube/config
     - docker build -t ${DOCKER_USER}/${APP_NAME}:latest .
