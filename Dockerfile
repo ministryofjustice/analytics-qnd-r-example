@@ -1,4 +1,4 @@
-FROM rocker/shiny:latest
+FROM rocker/shiny
 
 RUN rm -rf /srv/shiny-server/*
 
