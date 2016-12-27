@@ -1,47 +1,24 @@
-## Customize the test machine
 machine:
   services:
-    - docker #uncomment if using circleci.com or the container docker daemon
-  # Add some environment variables
+    - docker
   environment:
-    # # a url that your ci system can hit to pull down your kube config file
-    # KUBEURL: http://
-    # # checksum for the kubeconfig file
-    # KUBECHECKSUM: a1e27f4bfad4df1de8f9a4662223dac7
-    # # contexts from your kubeconfig file that are used for deployment
-    # KUBECONTEXTQA: aws_kubernetes
     KUBECONTEXT: ${KUBECONTEXT}
-    # update this to the directory where your yaml\json files are for kubernetes relative to your project root directory
     KUBEDEPLOYDIR: ./k8s
-    BUILD: ${CIRCLE_BUILD_NUM}
     GITSHA: ${CIRCLE_SHA1}
-    # used for interpod and interservice communication
-    # Must be lowercase and <= 24 characters
-    # defaulted to user-repo for circleci
-    APPNAME: $(tr [A-Z] [a-z] <<< ${CIRCLE_PROJECT_USERNAME:0:8})-$(tr [A-Z] [a-z] <<< ${CIRCLE_PROJECT_REPONAME:0:15} | tr -d '_-')
-    # This uses the docker socket on the host instead of inside the container for caching\performance reasons
-    # DOCKER_HOST: unix:///tmp/docker.sock # comment this out if using circleci.com or the container docker daemon
-    # the docker repo
+    APPNAME: analytics-$(tr [A-Z] [a-z] <<< ${CIRCLE_PROJECT_REPONAME:0:15} | tr -d '_-')
     DOCKER_REGISTRY: quay.io
-    # the docker container defaulted to user/project
-    #CONTAINER1: $(tr [A-Z] [a-z] <<< ${CIRCLE_PROJECT_USERNAME:0:8})/$(tr [A-Z] [a-z] <<< ${CIRCLE_PROJECT_REPONAME:0:15}| tr -d '_-')
     CONTAINER:  kerin_cosford/analytics-qnd-r-example
-    #https_proxy: https://xxx.xxx.xxx.xxx:8080/ #uncomment if you need to use a proxy to access the kubernetes api
 
-# Customize checkout
 checkout:
  post:
    - git submodule sync
    - git submodule update --init # use submodules
 
-## Customize dependencies
 dependencies:
   cache_directories:
     - "~/.kube"
   override:
     - docker login -u ${QUAYUSER} -p ${QUAYPASS} -e ${QUAYEMAIL} ${DOCKER_REGISTRY}
-    # install any missing required binaries/config
-    #- chmod +x ./deploy/ensure-kubectl.sh && ./deploy/ensure-kubectl.sh ${KUBECONTEXT}
     - sudo apt-get install -y wget
     - sudo apt-get install -y gettext
     - wget https://storage.googleapis.com/kubernetes-release/release/v1.4.6/bin/linux/amd64/kubectl -O ~/.kube/kubectl
@@ -54,18 +31,6 @@ dependencies:
 test:
   override:
     - echo "test"
-# test:
-#   override:
-#     # run the container and add a label
-#     # do not specify a local port since the docker daemon is shared
-#     - docker run -p 3000 -d --label ${CONTAINER1} ${DOCKER_REGISTRY}/${CONTAINER1}:latest
-#     # show how to execute a command in your container
-#     # run any commands to test inside\outside of the container here
-#     - npm test
-#     # stop the container
-#     - docker stop $(docker ps -a -q --filter "label=${CONTAINER1}")
-#     # cleanup any stopped containers
-#     - docker rm $(docker ps -a -q) || /bin/true
 
 deployment:
   production:
@@ -73,14 +38,8 @@ deployment:
     commands:
        - docker push ${DOCKER_REGISTRY}/${CONTAINER}:git-${GITSHA}
        - docker push ${DOCKER_REGISTRY}/${CONTAINER}:latest
-       #- chmod +x ./deploy/deploy.sh && ./deploy/deploy.sh ${KUBECONTEXT} ${KUBEDEPLOYMENTDIR} ${APPNAME} ${GITSHA}
        - mkdir build
        - for f in ${KUBEDEPLOYDIR}/*.y*ml; do envsubst < $f > build/$(basename $f); done
        - ~/.kube/kubectl apply -f build/
        - ~/.kube/kubectl rollout status deployment/${APPNAME}
        - echo "Container ${DOCKER_REGISTRY}/${CONTAINER}:git-${GITSHA} deployed to https://${APPNAME}.${BASEAPPHOST}/"
-       #put integration tests here
-       # - echo "put integration tests here"
-       # - ./deploy/deploy-service.sh ${KUBECONTEXTPROD} ${KUBEDEPLOYMENTDIR} rolling
-       # #put deployment verification tests here
-       # - echo "put deployment verification tests here"
