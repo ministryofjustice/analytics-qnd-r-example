@@ -1,18 +1,18 @@
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
-  name: ${APPNAME}
+  name: ${APP_NAME}
   labels:
-    app: ${APPNAME}
+    app: ${APP_NAME}
 spec:
   replicas: 3
   template:
     metadata:
       labels:
-        app: ${APPNAME}
+        app: ${APP_NAME}
     spec:
       containers:
       - name: r-shiny-server
-        image: ${DOCKER_REGISTRY}/${CONTAINER}:git-${GITSHA}
+        image: ${DOCKER_REGISTRY}/${IMAGE_NAME}:git-${GIT_SHA}
         ports:
         - containerPort: 3838
