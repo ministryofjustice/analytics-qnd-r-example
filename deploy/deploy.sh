@@ -1,5 +1,5 @@
 #!/bin/bash
-
+set -x
 # Copyright 2014 The Kubernetes Authors.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -23,17 +23,6 @@ CONTEXT="$1"
 DEPLOYDIR="$2"
 APPNAME="$3"
 GITSHA="$4"
-
-#make sure we have the kubectl comand
-# chmod +x $DIR/ensure-kubectl.sh
-# $DIR/ensure-kubectl.sh
-
-# #set config context
-# ~/.kube/kubectl config use-context ${CONTEXT}
-# ~/.kube/kubectl version
-
-#get user, password, certs, namespace and api ip from config data
-# export kubepass=`(~/.kube/kubectl config view -o json --raw --minify  | jq .users[0].user.password | tr -d '\"')`
 
 export kubeuser=`(~/.kube/kubectl config view -o json --raw --minify  | jq .users[0].user.username | tr -d '\"')`
 
@@ -71,12 +60,6 @@ then
     export certcmd="$certcmd --cacert ${CONTEXT}-ca.pem"
 fi
 
-#set -x
-
-#print some useful data for folks to check on their service later
-# echo "Deploying to ${kubeurl}/api/v1/proxy/namespaces/${kubenamespace}/services/${APPNAME}"
-#echo "Monitor your service at ${https}://${kubeuser}:${kubepass}@${kubeip}/api/v1/proxy/namespaces/kube-system/services/kibana-logging/?#/discover?_a=(columns:!(log),filters:!(),index:'logstash-*',interval:auto,query:(query_string:(analyze_wildcard:!t,query:'tag:%22kubernetes.${APPNAME}*%22')),sort:!('@timestamp',asc))"
-
 # Expand env vars in k8s YAML
 mkdir ${DEPLOYDIR}/run
 for f in ${DEPLOYDIR}/*.y*ml; do
@@ -91,47 +74,3 @@ done
 
 echo "Container ${DOCKER_REGISTRY}/${CONTAINER}:git-${GITSHA} deployed to https://${APPNAME}.${BASEAPPHOST}/"
 
-# # Create or update kubernetes Deployment
-# if ! kubectl get deploy ${APPNAME}; then
-#     # Create Deployment if there isn't one already
-#     kubectl create -f ${DEPLOYRUNDIR}/deployment.yml
-# else
-#     # Update existing Deployment with build image
-#     kubectl set image deployment/${APPNAME} r-shiny-server=${DOCKER_REGISTRY}/${CONTAINER}:build-${BUILD}
-#     # Output Deployment status until complete
-#     kubectl rollout status deployment/${APPNAME}
-# fi
-
-# Create or update Ingress
-
-
-# if [ "${ROLLING}" = "rolling" ]; then
-#   # perform a rolling update.
-#   # assumes your service\rc are already created
-#   ~/.kube/kubectl rolling-update ${APPNAME} --image=${DOCKER_REGISTRY}/${CONTAINER1}:latest || true
-
-# else
-
-#   # delete service (throws and error to ignore if service does not exist already)
-#   for f in ${DEPLOYDIR}/*.yaml; do envsubst < $f > kubetemp.yaml; cat kubetemp.yaml; echo ""; ~/.kube/kubectl delete --namespace=${kubenamespace} -f kubetemp.yaml || true; done
-
-#   # create service (does nothing if the service already exists)
-#   for f in ${DEPLOYDIR}/*.yaml; do envsubst < $f > kubetemp.yaml; ~/.kube/kubectl create --namespace=${kubenamespace} -f kubetemp.yaml --validate=false || true; done
-# fi
-
-# wait for services to start
-# sleep 30
-
-# COUNTER=0
-# while [  $COUNTER -lt 30 ]; do
-#   let COUNTER=COUNTER+1
-#   echo Service Check: $COUNTER
-#   STATUSCODE=$(curl -k --silent --output /dev/stdnull --write-out "%{http_code}" $certcmd  ${https}://${kubeuser}:${kubepass}@${kubeip}/api/v1/proxy/namespaces/${kubenamespace}/services/${APPNAME}/)
-#   echo HTTP Status: $STATUSCODE
-#   if [ "$STATUSCODE" -eq "200" ]; then
-#     break
-#   else
-#     sleep 10
-#     false
-#   fi
-# done
