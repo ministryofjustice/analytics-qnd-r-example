@@ -13,8 +13,16 @@ spec:
     spec:
       containers:
         - name: r-shiny-server
-          image: ${DOCKER_USER}/${APP_NAME}:git-${GIT_SHA}
+          image: rocker/shiny
           ports:
-          - containerPort: 3838
+            - containerPort: 3838
+          volumeMounts:
+            - mountPath: /srv
+              name: app-volume
+      volumes:
+        - name: app-volume
+          gitRepo:
+            repository: ${CIRCLE_REPOSITORY_URL}
+            revision: ${CIRCLE_SHA1}
       imagePullSecrets:
         - name: analytics-registry
