@@ -21,7 +21,8 @@
 DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
 CONTEXT="$1"
 DEPLOYDIR="$2"
-GITSHA="$3"
+APPNAME="$3"
+GITSHA="$4"
 
 #make sure we have the kubectl comand
 # chmod +x $DIR/ensure-kubectl.sh
@@ -73,7 +74,7 @@ fi
 #set -x
 
 #print some useful data for folks to check on their service later
-echo "Deploying service to ${https}://${kubeuser}:PASSWORD@${kubeurl}/api/v1/proxy/namespaces/${kubenamespace}/services/${APPNAME}"
+# echo "Deploying to ${kubeurl}/api/v1/proxy/namespaces/${kubenamespace}/services/${APPNAME}"
 #echo "Monitor your service at ${https}://${kubeuser}:${kubepass}@${kubeip}/api/v1/proxy/namespaces/kube-system/services/kibana-logging/?#/discover?_a=(columns:!(log),filters:!(),index:'logstash-*',interval:auto,query:(query_string:(analyze_wildcard:!t,query:'tag:%22kubernetes.${APPNAME}*%22')),sort:!('@timestamp',asc))"
 
 # Expand env vars in k8s YAML
@@ -83,10 +84,10 @@ for f in ${DEPLOYDIR}/*.y*ml; do
 done
 
 # Apply changes, including Deployment update
-kubectl apply -f ${DEPLOYDIR}/run/
+~/.kube/kubectl apply -f ${DEPLOYDIR}/run/
 
 # Output Deployment update status until complete
-kubectl rollout status -f ${DEPLOYDIR}/run/ -R
+~/.kube/kubectl rollout status -f ${DEPLOYDIR}/run/ -R
 
 echo "Container ${DOCKER_REGISTRY}/${CONTAINER}:git-${GITSHA} deployed to https://${APPNAME}.${BASEAPPHOST}/"
 
