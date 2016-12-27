@@ -42,8 +42,8 @@ dependencies:
     - docker login -u ${QUAYUSER} -p ${QUAYPASS} -e ${QUAYEMAIL} ${DOCKER_REGISTRY}
     # install any missing required binaries/config
     #- chmod +x ./deploy/ensure-kubectl.sh && ./deploy/ensure-kubectl.sh ${KUBECONTEXT}
-    - sudo apt-get install wget
-    - sudo apt-get install envsubst
+    - sudo apt-get install -y wget
+    - sudo apt-get install -y gettext
     - wget https://storage.googleapis.com/kubernetes-release/release/v1.4.6/bin/linux/amd64/kubectl -O ~/.kube/kubectl
     - chmod +x ~/.kube/kubectl
     - echo ${KUBECONFIGB64} | base64 -d > ~/.kube/config
