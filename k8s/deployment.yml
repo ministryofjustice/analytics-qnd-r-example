@@ -20,7 +20,7 @@ spec:
             - mountPath: /srv
               name: shiny-app
         - name: git-sync
-          image: gcr.io/google_containers/git-sync
+          image: openweb/git-sync:0.0.1
           imagePullPolicy: Always
           volumeMounts:
             - mountPath: /git
