@@ -24,42 +24,6 @@ DEPLOYDIR="$2"
 APPNAME="$3"
 GITSHA="$4"
 
-export kubeuser=`(~/.kube/kubectl config view -o json --raw --minify  | jq .users[0].user.username | tr -d '\"')`
-
-export kubeurl=`(~/.kube/kubectl config view -o json --raw --minify  | jq .clusters[0].cluster.server | tr -d '\"')`
-
-export kubenamespace=`(~/.kube/kubectl config view -o json --raw --minify  | jq .contexts[0].context.namespace | tr -d '\"')`
-
-export kubeip=`(echo $kubeurl | sed 's~http[s]*://~~g')`
-
-export https=`(echo $kubeurl | awk 'BEGIN { FS = ":" } ; { print $1 }')`
-
-export certdata=`(~/.kube/kubectl config view -o json --raw --minify  | jq '.users[0].user["client-certificate-data"]' | tr -d '\"')`
-
-export certcmd=""
-
-if [ "$certdata" != "null" ] && [ "$certdata" != "" ];
-then
-    ~/.kube/kubectl config view -o json --raw --minify  | jq '.users[0].user["client-certificate-data"]' | tr -d '\"' | base64 --decode > ${CONTEXT}-cert.pem
-    export certcmd="$certcmd --cert ${CONTEXT}-cert.pem"
-fi
-
-export keydata=`(~/.kube/kubectl config view -o json --raw --minify  | jq '.users[0].user["client-key-data"]' | tr -d '\"')`
-
-if [ "$keydata" != "null" ] && [ "$keydata" != "" ];
-then
-    ~/.kube/kubectl config view -o json --raw --minify  | jq '.users[0].user["client-key-data"]' | tr -d '\"' | base64 --decode > ${CONTEXT}-key.pem
-    export certcmd="$certcmd --key ${CONTEXT}-key.pem"
-fi
-
-export cadata=`(~/.kube/kubectl config view -o json --raw --minify  | jq '.clusters[0].cluster["certificate-authority-data"]' | tr -d '\"')`
-
-if [ "$cadata" != "null" ] && [ "$cadata" != "" ];
-then
-    ~/.kube/kubectl config view -o json --raw --minify  | jq '.clusters[0].cluster["certificate-authority-data"]' | tr -d '\"' | base64 --decode > ${CONTEXT}-ca.pem
-    export certcmd="$certcmd --cacert ${CONTEXT}-ca.pem"
-fi
-
 # Expand env vars in k8s YAML
 mkdir ${DEPLOYDIR}/run
 for f in ${DEPLOYDIR}/*.y*ml; do
