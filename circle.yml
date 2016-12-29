@@ -8,7 +8,7 @@ dependencies:
     - "~/.kube"
   override:
     - sudo apt-get install -y gettext
-    - if [[ ! -e ~/.kube/kubectl ]]; then wget https://storage.googleapis.com/kubernetes-release/release/v1.4.6/bin/linux/amd64/kubectl -O ~/.kube/kubectl; chmod +x ~/.kube/kubectl; fi
+    - if [[ ! -e ~/.kube/kubectl ]]; then mkdir -p ~/.kube; wget https://storage.googleapis.com/kubernetes-release/release/v1.4.6/bin/linux/amd64/kubectl -O ~/.kube/kubectl; chmod +x ~/.kube/kubectl; fi
     - echo ${KUBECONFIGB64} | base64 -d > ~/.kube/config
 
 test:
