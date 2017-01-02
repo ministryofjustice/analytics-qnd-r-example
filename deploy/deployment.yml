@@ -53,4 +53,3 @@ spec:
       volumes:
         - name: shiny-app
           emptyDir: {}
-
