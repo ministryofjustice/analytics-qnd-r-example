@@ -47,8 +47,6 @@ spec:
             value: /git
           - name: GIT_SYNC_BRANCH
             value: master
-          - name: GIT_SYNC_WAIT
-            value: "10"
 
       volumes:
         - name: shiny-app
