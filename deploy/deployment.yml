@@ -31,6 +31,9 @@ spec:
           volumeMounts:
             - mountPath: /srv
               name: shiny-app
+          resources:
+            requests:
+              cpu: 10m
 
         - name: git-sync
           image: openweb/git-sync:0.0.1
@@ -39,14 +42,17 @@ spec:
             - mountPath: /git
               name: shiny-app
           env:
-          - name: GIT_SYNC_REPO
-            value: ${CIRCLE_REPOSITORY_URL}
-          - name: GIT_SYNC_REV
-            value: ${CIRCLE_SHA1}
-          - name: GIT_SYNC_ROOT
-            value: /git
-          - name: GIT_SYNC_BRANCH
-            value: master
+            - name: GIT_SYNC_REPO
+              value: ${CIRCLE_REPOSITORY_URL}
+            - name: GIT_SYNC_REV
+              value: ${CIRCLE_SHA1}
+            - name: GIT_SYNC_ROOT
+              value: /git
+            - name: GIT_SYNC_BRANCH
+              value: master
+          resources:
+            requests:
+              cpu: 10m
 
       volumes:
         - name: shiny-app
