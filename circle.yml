@@ -23,4 +23,3 @@ deployment:
        - for f in ${KUBE_DEPLOY_DIR}/*.y*ml; do envsubst < $f > build/$(basename $f); done
        - ~/.kube/kubectl apply -f build/
        - ~/.kube/kubectl rollout status deployment/${APP_NAME}
-
