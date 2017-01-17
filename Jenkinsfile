@@ -2,7 +2,7 @@ node {
     def deploy_dir = "./deploy"
     def app_name = sh("echo ${env.JOB_NAME} | tr '[:upper:]' '[:lower:]' | tr -s '_ ' '-' |cut -c1-15")
 
-    stage 'Checkout' {
+    stage('Checkout') {
         git "https://github.com/ministryofjustice/analytics-qnd-r-example"
     }
 
@@ -10,11 +10,11 @@ node {
     //     def Img = docker.build "kerin/analytics-qnd-r-example:latest"
     // }
 
-    stage 'Prepare' {
+    stage('Prepare') {
         sh('sudo apt-get install -y gettext')
     }
 
-    stage 'Test' {
+    stage('Test') {
         sh("echo \"app_name: ${app_name}\"")
     }
 
