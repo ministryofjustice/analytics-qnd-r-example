@@ -1,6 +1,6 @@
 node {
     def deploy_dir = "./deploy"
-    def app_name = sh("$(tr [A-Z] [a-z] <<< ${env.JOB_NAME:0:15} | tr '_ ' '-')")
+    def app_name = sh(returnStdout: true, script: "tr [A-Z] [a-z] <<< ${env.JOB_NAME:0:15} | tr '_ ' '-'")
 
     stage 'Checkout' {
         git "https://github.com/ministryofjustice/analytics-qnd-r-example"
