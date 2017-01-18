@@ -7,8 +7,12 @@ node {
 
     stage('Checkout') {
         checkout scm
-        // incredibly, Jenkins Pipeline scripts have no access to git variables,
-        // so they're handled manually here
+        // Incredibly, Jenkins Pipeline scripts have no access to git variables,
+        // so they're handled manually here.
+        //
+        // Declaring the vars with 'env.FOO' makes them accessible outside of this
+        // scope (in a different stage), but they're not actually env vars from
+        // a shell script's point of view. Groovy is fun!
         env.GIT_SHA = sh(returnStdout: true, script: 'git rev-parse HEAD').trim()
         env.GIT_URL = sh(returnStdout: true, script: 'git config --get remote.origin.url').trim()
     }
@@ -35,6 +39,8 @@ node {
         for f in ${DEPLOY_DIR}/*.y*ml
         do
             APP_NAME=${APP_NAME}
+            GIT_SHA=${GIT_SHA}
+            GIT_URL=${GIT_URL}
             envsubst < \$f > build/\$(basename \$f);
         done
         """
