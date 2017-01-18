@@ -1,8 +1,8 @@
 node {
     def deploy_dir = "./deploy"
-    APP_NAME = sh(
+    def app_name = sh(
         script: "echo ${env.JOB_NAME} | tr '[:upper:]' '[:lower:]' | tr -s '_ ' '-' |cut -c1-15",
-        returnStdOut: true
+        returnStdout: true
     ).trim()
 
     stage('Checkout') {
@@ -18,7 +18,7 @@ node {
     // }
 
     stage('Test') {
-        echo "${APP_NAME}"
+        echo "${app_name}"
         sh "/usr/local/bin/kubectl get pods"
     }
 
