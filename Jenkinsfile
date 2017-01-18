@@ -27,6 +27,9 @@ node {
     // }
 
     stage ('Build') {
+        echo "${GIT_SHA}"
+        echo "${GIT_URL}"
+
         sh "mkdir build"
         sh """
         for f in ${DEPLOY_DIR}/*.y*ml
