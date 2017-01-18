@@ -12,8 +12,8 @@ node {
         // so they're handled manually here.
         //
         // Declaring vars as env.FOO makes them available in another stage/scope
-        def env.GIT_SHA = sh(returnStdout: true, script: 'git rev-parse HEAD').trim()
-        def env.GIT_URL = sh(returnStdout: true, script: 'git config --get remote.origin.url').trim()
+        env.GIT_SHA = sh(returnStdout: true, script: 'git rev-parse HEAD').trim()
+        env.GIT_URL = sh(returnStdout: true, script: 'git config --get remote.origin.url').trim()
     }
 
     stage ('Build') {
