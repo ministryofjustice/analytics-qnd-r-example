@@ -6,7 +6,8 @@ node {
     ).trim()
 
     stage('Checkout') {
-        git "https://github.com/ministryofjustice/analytics-qnd-r-example"
+        // git "https://github.com/ministryofjustice/analytics-qnd-r-example"
+        checkout scm
     }
 
     // stage("Build") {
