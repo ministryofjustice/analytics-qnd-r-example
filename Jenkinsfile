@@ -9,8 +9,8 @@ node {
         checkout scm
         // incredibly, Jenkins Pipeline scripts have no access to git variables,
         // so they're handled manually here
-        def GIT_SHA = sh(returnStdout: true, script: 'git rev-parse HEAD').trim()
-        def GIT_URL = sh(returnStdout: true, script: 'git config --get remote.origin.url').trim()
+        env.GIT_SHA = sh(returnStdout: true, script: 'git rev-parse HEAD').trim()
+        env.GIT_URL = sh(returnStdout: true, script: 'git config --get remote.origin.url').trim()
     }
 
     // stage("Build") {
@@ -27,25 +27,23 @@ node {
     // }
 
     stage ('Build') {
-        echo "${GIT_SHA}"
-        echo "${GIT_URL}"
+        // echo "${GIT_SHA}"
+        // echo "${GIT_URL}"
 
-        // sh "mkdir build"
-        // sh """
-        // for f in ${DEPLOY_DIR}/*.y*ml
-        // do
-        //     APP_NAME=${APP_NAME}
-        //     GIT_SHA=${GIT_SHA}
-        //     GIT_URL=${GIT_URL}
-        //     envsubst < \$f > build/\$(basename \$f);
-        // done
-        // """
+        sh "mkdir build"
+        sh """
+        for f in ${DEPLOY_DIR}/*.y*ml
+        do
+            APP_NAME=${APP_NAME}
+            envsubst < \$f > build/\$(basename \$f);
+        done
+        """
     }
 
-    // stage ('Deploy') {
-    //     sh "kubectl apply -f build/"
-    //     sh "kubectl rollout status deployment/${APP_NAME}"
-    // }
+    stage ('Deploy') {
+        sh "kubectl apply -f build/"
+        sh "kubectl rollout status deployment/${APP_NAME}"
+    }
 
     // stage 'Deploy' {
     //     sh("mkdir build")
