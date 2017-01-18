@@ -25,7 +25,7 @@ node {
 
     stage ('Build') {
         sh "mkdir build"
-        sh "for f in ${DEPLOY_DIR}/*.y*ml; do envsubst < $f > build/$(basename $f); done"
+        sh "for f in ${DEPLOY_DIR}/*.y*ml; do envsubst < \$f > build/\$(basename \$f); done"
     }
 
     stage ('Deploy') {
