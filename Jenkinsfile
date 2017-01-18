@@ -27,8 +27,8 @@ node {
     // }
 
     stage ('Build') {
-        // echo "${GIT_SHA}"
-        // echo "${GIT_URL}"
+        echo "${GIT_SHA}"
+        echo "${GIT_URL}"
 
         sh "mkdir build"
         sh """
