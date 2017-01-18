@@ -38,10 +38,10 @@ node {
         sh """
         for f in ${DEPLOY_DIR}/*.y*ml
         do
-            sed -e 's/\\\${APP_NAME}/${APP_NAME}/' \
-                -e 's/\\\${GIT_SHA}/${GIT_SHA}/' \
-                -e 's/\\\${GIT_URL}/${GIT_URL}/' \
-                -e 's/\\\${BASE_APP_HOST}/${env.BASE_APP_HOST}/' \
+            sed -e 's|\${APP_NAME}|'${APP_NAME}'|g' \
+                -e 's|\${GIT_SHA}|'${GIT_SHA}'|g' \
+                -e 's|\${GIT_URL}|'${GIT_URL}'|g' \
+                -e 's|\${BASE_APP_HOST}|'${env.BASE_APP_HOST}'|g' \
                 \$f > build/\$(basename \$f)
         done
         """
