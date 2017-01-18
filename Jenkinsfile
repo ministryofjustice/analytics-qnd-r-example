@@ -16,7 +16,7 @@ node {
 
     stage('Test') {
         sh("echo \"app_name: ${app_name}\"")
-        sh("kubectl get pods")
+        sh("/usr/local/bin/kubectl get pods")
     }
 
     // stage 'Deploy' {
