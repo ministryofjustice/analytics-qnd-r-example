@@ -10,9 +10,9 @@ node {
     //     def Img = docker.build "kerin/analytics-qnd-r-example:latest"
     // }
 
-    stage('Prepare') {
-        sh('sudo apt-get install -y gettext')
-    }
+    // stage('Prepare') {
+    //     sh('apt-get install -y gettext')
+    // }
 
     stage('Test') {
         sh("echo \"app_name: ${app_name}\"")
