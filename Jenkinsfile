@@ -5,36 +5,18 @@ node {
         returnStdout: true
     ).trim()
 
-    // stage('Checkout') {
-        checkout scm
-        // Incredibly, Jenkins Pipeline scripts have no access to git variables,
-        // so they're handled manually here.
-        //
-        // Declaring the vars with 'env.FOO' makes them accessible outside of this
-        // scope (in a different stage), but they're not actually env vars from
-        // a shell script's point of view. Groovy is fun!
-        def GIT_SHA = sh(returnStdout: true, script: 'git rev-parse HEAD').trim()
-        def GIT_URL = sh(returnStdout: true, script: 'git config --get remote.origin.url').trim()
-    // }
+    checkout scm
 
-    // stage("Build") {
-    //     def Img = docker.build "kerin/analytics-qnd-r-example:latest"
-    // }
-
-    // stage('Prepare') {
-    //     sh('apt-get install -y gettext')
-    // }
-
-    // stage('Test') {
-    //     echo "${APP_NAME}"
-    //     sh "/usr/local/bin/kubectl get pods"
-    // }
+    // Incredibly, Jenkins Pipeline scripts do not get passed git variables,
+    // so they're handled manually here.
+    def GIT_SHA = sh(returnStdout: true, script: 'git rev-parse HEAD').trim()
+    def GIT_URL = sh(returnStdout: true, script: 'git config --get remote.origin.url').trim()
 
     stage ('Build') {
-        // echo "${GIT_SHA}"
-        // echo "${GIT_URL}"
-
         sh "mkdir build"
+
+        // replace variable placeholders in k8s YML files with values
+        // BASE_APP_HOST is provided by EnvInject in Job config
         sh """
         for f in ${DEPLOY_DIR}/*.y*ml
         do
@@ -51,11 +33,4 @@ node {
         sh "kubectl apply -f build/"
         sh "kubectl rollout status deployment/${APP_NAME}"
     }
-
-    // stage 'Deploy' {
-    //     sh("mkdir build")
-    //     sh("for f in ${deploy_dir}/*.y*ml; do envsubst < $f > build/$(basename $f); done")
-    //     sh("kubectl apply -f build/")
-    //     sh("kubectl rollout status deployment/${APP_NAME}")
-    // }
 }
