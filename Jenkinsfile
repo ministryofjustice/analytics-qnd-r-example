@@ -30,22 +30,22 @@ node {
         echo "${GIT_SHA}"
         echo "${GIT_URL}"
 
-        sh "mkdir build"
-        sh """
-        for f in ${DEPLOY_DIR}/*.y*ml
-        do
-            APP_NAME=${APP_NAME}
-            GIT_SHA=${GIT_SHA}
-            GIT_URL=${GIT_URL}
-            envsubst < \$f > build/\$(basename \$f);
-        done
-        """
+        // sh "mkdir build"
+        // sh """
+        // for f in ${DEPLOY_DIR}/*.y*ml
+        // do
+        //     APP_NAME=${APP_NAME}
+        //     GIT_SHA=${GIT_SHA}
+        //     GIT_URL=${GIT_URL}
+        //     envsubst < \$f > build/\$(basename \$f);
+        // done
+        // """
     }
 
-    stage ('Deploy') {
-        sh "kubectl apply -f build/"
-        sh "kubectl rollout status deployment/${APP_NAME}"
-    }
+    // stage ('Deploy') {
+    //     sh "kubectl apply -f build/"
+    //     sh "kubectl rollout status deployment/${APP_NAME}"
+    // }
 
     // stage 'Deploy' {
     //     sh("mkdir build")
