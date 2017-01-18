@@ -1,9 +1,9 @@
 node {
     def deploy_dir = "./deploy"
-    def app_name = sh(
+    APP_NAME = sh(
         script: "echo ${env.JOB_NAME} | tr '[:upper:]' '[:lower:]' | tr -s '_ ' '-' |cut -c1-15",
         returnStdOut: true
-    )
+    ).trim()
 
     stage('Checkout') {
         git "https://github.com/ministryofjustice/analytics-qnd-r-example"
@@ -18,7 +18,7 @@ node {
     // }
 
     stage('Test') {
-        echo "${app_name}"
+        echo "${APP_NAME}"
         sh "/usr/local/bin/kubectl get pods"
     }
 
