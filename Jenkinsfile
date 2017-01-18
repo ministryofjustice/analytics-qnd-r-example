@@ -5,12 +5,16 @@ node {
         returnStdout: true
     ).trim()
 
-    checkout scm
+    stage ('Checkout') {
+        checkout scm
 
-    // Incredibly, Jenkins Pipeline scripts do not get passed git variables,
-    // so they're handled manually here.
-    def GIT_SHA = sh(returnStdout: true, script: 'git rev-parse HEAD').trim()
-    def GIT_URL = sh(returnStdout: true, script: 'git config --get remote.origin.url').trim()
+        // Incredibly, Jenkins Pipeline scripts do not get passed git variables,
+        // so they're handled manually here.
+        //
+        // Declaring vars as env.FOO makes them available in another stage/scope
+        def env.GIT_SHA = sh(returnStdout: true, script: 'git rev-parse HEAD').trim()
+        def env.GIT_URL = sh(returnStdout: true, script: 'git config --get remote.origin.url').trim()
+    }
 
     stage ('Build') {
         sh "mkdir build"
@@ -21,8 +25,8 @@ node {
         for f in ${DEPLOY_DIR}/*.y*ml
         do
             sed -e 's|\${APP_NAME}|'${APP_NAME}'|g' \
-                -e 's|\${GIT_SHA}|'${GIT_SHA}'|g' \
-                -e 's|\${GIT_URL}|'${GIT_URL}'|g' \
+                -e 's|\${GIT_SHA}|'${env.GIT_SHA}'|g' \
+                -e 's|\${GIT_URL}|'${env.GIT_URL}'|g' \
                 -e 's|\${BASE_APP_HOST}|'${env.BASE_APP_HOST}'|g' \
                 \$f > build/\$(basename \$f)
         done
