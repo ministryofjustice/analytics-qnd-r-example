@@ -41,6 +41,8 @@ node {
             APP_NAME=${APP_NAME}
             GIT_SHA=${GIT_SHA}
             GIT_URL=${GIT_URL}
+            BASE_APP_HOST=${env.BASE_APP_HOST}
+
             envsubst < \$f > build/\$(basename \$f);
         done
         """
